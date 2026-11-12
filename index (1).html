@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mundo Digital Planner</title>
+<style>
+:root{--bg:#f6f5f1;--sf:#fff;--tx:#1f2328;--mu:#6b7280;--bd:#e3e1da;--ac:#2563eb;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#16171a;--sf:#212328;--tx:#ececec;--mu:#9aa0a6;--bd:#34373d;--ac:#6ea1ff}}
+:root[data-theme="dark"]{--bg:#16171a;--sf:#212328;--tx:#ececec;--mu:#9aa0a6;--bd:#34373d;--ac:#6ea1ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+.wrap{max-width:1400px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:0}
+.top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px}
+button,select,input,textarea{font:inherit;color:var(--tx)}
+button{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:6px 12px;cursor:pointer}
+button:hover{border-color:var(--ac)}
+.pri{background:var(--ac);color:#fff;border-color:var(--ac)}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tabs button{padding:8px 16px;font-weight:600}
+.tabs .on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.nav,.acts{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.hoy{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center}
+.bar{height:8px;background:var(--bd);border-radius:6px;overflow:hidden;width:200px}
+.bar i{display:block;height:100%;background:#16a34a;width:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;align-items:center}
+.chip{font-size:13px;padding:3px 10px;border-radius:20px;color:#fff;border-color:transparent}
+.chip.on{box-shadow:0 0 0 2px var(--tx)}
+#cf{background:#fef3c7;color:#78350f;border:1px solid #f59e0b;border-radius:10px;padding:10px 12px;margin-top:10px;font-size:13px;display:flex;gap:10px;align-items:center}
+#cf span{flex:1}
+.grid{display:grid;grid-template-columns:repeat(7,minmax(150px,1fr));gap:8px;overflow-x:auto}
+.kan{display:grid;grid-template-columns:repeat(4,minmax(200px,1fr));gap:10px;overflow-x:auto}
+.day,.col{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:8px;min-height:240px;display:flex;flex-direction:column;gap:6px}
+.day.today{border:2px solid var(--ac)}
+.day h3,.col h3{margin:0;font-size:13px;color:var(--mu);display:flex;justify-content:space-between;text-transform:capitalize}
+.t{display:flex;gap:6px;align-items:flex-start;border-left:4px solid;border-radius:6px;background:var(--bg);padding:5px 6px;font-size:13px}
+.t.done .tt{text-decoration:line-through;color:var(--mu)}
+.t .tt{flex:1;cursor:pointer}
+.t small{display:block;color:var(--mu);font-size:11px}
+.t input{margin-top:2px}
+.add{margin-top:auto;font-size:13px;border-style:dashed;color:var(--tx)}
+dialog{border:1px solid var(--bd);border-radius:14px;background:var(--sf);color:var(--tx);padding:18px;width:min(440px,92vw)}
+dialog::backdrop{background:#0006}
+label{display:block;font-size:13px;color:var(--mu);margin:10px 0 3px}
+dialog input[type=text],dialog input[type=date],dialog select,dialog textarea{width:100%;padding:7px;border:1px solid var(--bd);border-radius:8px;background:var(--bg)}
+.row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.foot{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--mu);align-items:center}
+.ar{display:flex;gap:8px;align-items:center;padding:4px 0}
+.ar span{flex:1}
+.es{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}
+.sc{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:12px 14px}
+.sc h3{margin:0 0 8px;font-size:12px;color:var(--mu);letter-spacing:.03em}
+.big{font-size:28px;font-weight:700;line-height:1.1}
+.kv{display:flex;justify-content:space-between;gap:8px;padding:3px 0;font-size:14px;border-bottom:1px dashed var(--bd)}
+.kv:last-child{border-bottom:0}
+.pl{display:inline-block;color:#fff;border-radius:20px;padding:1px 9px;font-size:12px}
+.sc table{width:100%;border-collapse:collapse;font-size:14px}
+.sc th,.sc td{padding:4px 6px;text-align:right}.sc th:first-child,.sc td:first-child{text-align:left}
+.sc th{color:var(--mu);font-weight:600;font-size:12px}
+.sn{font-size:12px;color:var(--mu);margin-top:8px}
+@media print{.top,.tabs,.chips,.foot,#cf,.hoy,.sc button{display:none!important}.wrap{padding:0}}
+.hid{display:none!important}
+</style></head><body>
+<div class="wrap">
+<div class="top"><h1>📅 Mundo Digital Planner</h1>
+<div class="acts"><button class="pri" id="nt">+ Tarea</button><button class="pri" id="np">+ Publicación</button><button id="ca">⚙ Mis cuentas</button></div></div>
+<div class="tabs"><button id="tS" class="on">Semana</button><button id="tC">Contenido</button><button id="tE">Estadísticas</button></div>
+<div id="vS">
+<div class="top"><div class="nav"><button id="prev">◀</button><b id="wk"></b><button id="next">▶</button><button id="hoyb">Hoy</button></div><button id="cw">Copiar tareas a la semana siguiente</button></div>
+<div class="hoy"><div><b id="hoyT"></b><div style="color:var(--mu);font-size:13px" id="hoyS"></div></div>
+<div class="bar"><i id="pg"></i></div><button id="noti">🔔 Recordatorio diario</button></div>
+</div>
+<div class="chips" id="chips"></div>
+<div id="gS" class="grid"></div>
+<div id="gC" class="kan hid"></div>
+<div id="gE" class="es hid"></div>
+<div class="foot"><button id="exp">⬇ Guardar copia</button><button id="imp">⬆ Cargar copia</button><input type="file" id="file" accept=".json" hidden>
+<span>Los datos se guardan en este navegador. Haz una copia de vez en cuando.</span></div>
+<div class="foot"><button id="gb">☁ Conectar con Google Drive</button><button id="gr" class="hid">Reconectar</button><span id="sync"></span></div>
+<div id="cf" class="hid"><span id="cft"></span><button id="cfx">Entendido</button></div>
+</div>
+
+<dialog id="dlg"><form method="dialog" id="f">
+<b id="dt">Nueva tarea</b>
+<label>Tarea</label><input type="text" id="ti" required placeholder="Ej: Revisar mensajes de la página">
+<label>Cuenta / área</label><select id="ar"></select>
+<label>Fecha</label><input type="date" id="da" required>
+<label>¿Con qué frecuencia?</label><select id="rp"><option value="0">Solo ese día (tarea puntual)</option><option value="1">Todas las semanas, ese día de la semana</option></select>
+<div class="row"><button type="button" id="del" style="margin-right:auto;color:#dc2626">Eliminar</button><button type="button" class="cn">Cancelar</button><button class="pri">Guardar</button></div>
+</form></dialog>
+
+<dialog id="pdl"><form method="dialog" id="pf">
+<b id="pt">Nueva publicación</b>
+<label>Título o idea</label><input type="text" id="pti" required placeholder="Ej: 10 ideas para publicar">
+<label>Dónde se publica</label><select id="par"></select>
+<label>Formato</label><select id="pfm"><option>Post</option><option>Reel / video</option><option>Historia</option><option>Carrusel</option><option>Texto largo</option><option>Artículo / blog</option><option>Producto / tienda</option></select>
+<label>Estado</label><select id="pst"></select>
+<label>Fecha de publicación (opcional, así aparece en la semana)</label><input type="date" id="pda">
+<label>Texto, notas o enlace</label><textarea id="pno" rows="5"></textarea>
+<div class="row"><button type="button" id="pdel" style="margin-right:auto;color:#dc2626">Eliminar</button><button type="button" class="cn">Cancelar</button><button class="pri">Guardar</button></div>
+</form></dialog>
+
+<dialog id="adl"><div><b>Mis cuentas y áreas</b><div style="color:var(--mu);font-size:13px">Activa solo lo que ya usas. Lo demás queda guardado para cuando lo montes.</div><div id="al"></div>
+<label>Agregar otra cuenta</label><div class="ar"><input type="text" id="an" placeholder="Ej: Segunda tienda" style="flex:1;padding:7px;border:1px solid var(--bd);border-radius:8px;background:var(--bg)"><input type="color" id="ac" value="#8b5cf6"><button id="aa">Agregar</button></div>
+<div class="row"><button class="cn pri">Listo</button></div></div></dialog>
+
+<script>
+const DA={fb:['Facebook perfil','#1877f2',1],fp:['Facebook página','#0ea5e9',1],ig:['Instagram','#d6249f',1],st:['Tienda virtual','#16a34a',1],yt:['YouTube','#e11d48',0],tt:['TikTok','#0d9488',0],amz:['Amazon afiliados','#d97706',0],tm:['Temu afiliados','#ea580c',0],ho:['Hotmart','#c2410c',0],vi:['Edición de video','#7c3aed',0],wb:['Contenido páginas/tiendas','#2563eb',0],pd:['Productos digitales','#15803d',0],ot:['Otro','#6b7280',1]};
+const DN=['lunes','martes','miércoles','jueves','viernes','sábado','domingo'],ST=['Idea','En proceso','Listo','Publicado'];
+let S={tasks:[],tpl:[],done:{},posts:[],areas:{},hour:'09:00',noti:false,lastN:''};
+try{const r=localStorage.getItem('plan-v1');if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+Object.keys(DA).forEach(k=>{if(!S.areas[k])S.areas[k]=[...DA[k]]});
+if(!S.tpl.length&&!S.tasks.length&&!S.posts.length){const t=(d,a,x)=>S.tpl.push({id:'s'+S.tpl.length,title:x,area:a,days:[d]});
+t(0,'fb','Publicar en mi perfil de Facebook');t(1,'fp','Publicar en la página de Facebook');t(2,'ig','Publicar en Instagram');t(4,'st','Actualizar productos de la tienda')}
+let lastK=null;const key=()=>JSON.stringify(Object.assign({},S,{ts:0,lastN:''}));
+let G={on:false,fid:null,synced:0,mail:'',tok:null,exp:0,busy:false,t:null,err:'',auth:false};
+try{const m=JSON.parse(localStorage.getItem('plan-v1-sync')||'{}');G.on=!!m.on;G.fid=m.fid||null;G.synced=m.synced||0;G.mail=m.mail||''}catch(e){}
+const sv=()=>{const k=key();if(lastK!==null&&k!==lastK){S.ts=Date.now();sched()}lastK=k;try{localStorage.setItem('plan-v1',JSON.stringify(S))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const pd=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)};
+const wd=d=>(d.getDay()+6)%7;
+const mon=d=>{const x=new Date(d);x.setDate(x.getDate()-wd(x));x.setHours(0,0,0,0);return x};
+const $=i=>document.getElementById(i);
+const nm=k=>S.areas[k]?S.areas[k][0]:'(cuenta eliminada)',cl=k=>S.areas[k]?S.areas[k][1]:'#6b7280';
+const act=()=>Object.entries(S.areas).filter(([k,v])=>v[2]);
+const opts=sel=>{const l=act();if(sel&&S.areas[sel]&&!S.areas[sel][2])l.push([sel,S.areas[sel]]);return l.map(([k,v])=>'<option value="'+k+'">'+esc(v[0])+'</option>').join('')};
+let cur=mon(new Date()),filt=null,edit=null,tab='S';
+function dayItems(d,all){const k=iso(d),w=wd(d);
+const a=S.tasks.filter(t=>t.date===k).map(t=>({...t,kind:'t'}));
+const b=S.tpl.filter(t=>t.days.includes(w)).map(t=>({...t,kind:'p',date:k,done:!!S.done[t.id+'|'+k]}));
+const c=S.posts.filter(t=>t.date===k).map(t=>({...t,kind:'c',title:'📝 '+t.title,area:t.plat,done:t.status==='Publicado'}));
+return a.concat(b,c).filter(t=>all||!filt||t.area===filt)}
+function render(){
+$('vS').classList.toggle('hid',tab!=='S');$('gS').classList.toggle('hid',tab!=='S');$('gC').classList.toggle('hid',tab!=='C');$('gE').classList.toggle('hid',tab!=='E');$('chips').classList.toggle('hid',tab==='E');
+$('tS').className=tab==='S'?'on':'';$('tC').className=tab==='C'?'on':'';$('tE').className=tab==='E'?'on':'';
+$('chips').innerHTML='';
+act().forEach(([k,v])=>{const c=document.createElement('button');c.className='chip'+(filt===k?' on':'');c.textContent=v[0];c.style.background=v[1];c.onclick=()=>{filt=filt===k?null:k;render()};$('chips').appendChild(c)});
+tab==='S'?rW():tab==='C'?rC():rE();sv()}
+function rW(){
+const e=new Date(cur);e.setDate(e.getDate()+6);
+const f=d=>d.toLocaleDateString('es',{day:'numeric',month:'short'});
+$('wk').textContent=f(cur)+' – '+f(e);
+const g=$('gS');g.innerHTML='';const td=iso(new Date());
+for(let i=0;i<7;i++){const d=new Date(cur);d.setDate(d.getDate()+i);const k=iso(d);
+const col=document.createElement('div');col.className='day'+(k===td?' today':'');
+col.innerHTML='<h3><span>'+DN[i]+'</span><span>'+d.getDate()+'</span></h3>';
+dayItems(d).forEach(t=>{const r=document.createElement('div');r.className='t'+(t.done?' done':'');r.style.borderColor=cl(t.area);
+const cb=document.createElement('input');cb.type='checkbox';cb.checked=t.done;cb.onchange=()=>tog(t);
+const tt=document.createElement('div');tt.className='tt';tt.innerHTML='<span></span><small>'+esc(nm(t.area))+(t.kind==='p'?' · cada semana':'')+'</small>';tt.firstChild.textContent=t.title;tt.onclick=()=>t.kind==='c'?openP(S.posts.find(x=>x.id===t.id)):openT(t);
+r.append(cb,tt);col.appendChild(r)});
+const ab=document.createElement('button');ab.className='add';ab.textContent='+ Agregar tarea';ab.onclick=()=>openT(null,k);col.appendChild(ab);g.appendChild(col)}
+const all=dayItems(new Date(),1),dn=all.filter(t=>t.done).length;
+$('hoyT').textContent='Hoy: '+dn+' de '+all.length+' tareas hechas';
+$('hoyS').textContent=all.length-dn?'Te faltan '+(all.length-dn)+' por hacer.':(all.length?'¡Todo listo por hoy! 🎉':'Nada planificado hoy.');
+$('pg').style.width=(all.length?dn/all.length*100:0)+'%';
+$('noti').textContent=S.noti?'🔔 Aviso a las '+S.hour:'🔔 Recordatorio diario'}
+function setSt(p,s){p.status=s;if(s==='Publicado'&&!p.pubDate)p.pubDate=iso(new Date())}
+function rg(o){const s=mon(new Date());s.setDate(s.getDate()+o*7);const e=new Date(s);e.setDate(e.getDate()+6);return[iso(s),iso(e)]}
+const pdt=p=>p.pubDate||p.date||'';
+function tk(a,b){const u=S.tasks.filter(t=>t.date>=a&&t.date<=b);let d=u.filter(t=>t.done).length,n=u.length;const s=pd(a);
+for(let i=0;i<7;i++){const x=new Date(s);x.setDate(x.getDate()+i);const k=iso(x);S.tpl.forEach(t=>{if(t.days.includes(i)){n++;if(S.done[t.id+'|'+k])d++}})}
+return{d:d,n:n,p:n-d}}
+function rE(){
+const w0=rg(0),w1=rg(-1),mo=iso(new Date()).slice(0,7);
+const pub=S.posts.filter(p=>p.status==='Publicado'),inR=(p,r)=>{const x=pdt(p);return x>=r[0]&&x<=r[1]};
+const c={};ST.forEach(s=>c[s]=S.posts.filter(p=>p.status===s).length);
+const pw=[pub.filter(p=>inR(p,w1)).length,pub.filter(p=>inR(p,w0)).length],pm=pub.filter(p=>pdt(p).slice(0,7)===mo).length,sf=pub.filter(p=>!pdt(p)).length;
+const t1=tk(w1[0],w1[1]),t0=tk(w0[0],w0[1]);
+const pl={};S.posts.forEach(p=>{const o=pl[p.plat]||(pl[p.plat]={n:0,p:0});o.n++;if(p.status==='Publicado')o.p++});
+const kv=(a,b)=>'<div class="kv"><span>'+a+'</span><b>'+b+'</b></div>';
+const bar=(d,n)=>'<div class="bar" style="width:100%;margin-top:4px"><i style="width:'+(n?d/n*100:0)+'%"></i></div>';
+const fm=r=>{const o={day:'numeric',month:'short'};return pd(r[0]).toLocaleDateString('es',o)+' – '+pd(r[1]).toLocaleDateString('es',o)};
+let h='';
+h+='<div class="sc"><h3>1 · MI CONTENIDO AHORA</h3><div class="big">'+S.posts.length+'</div><div style="color:var(--mu);font-size:13px;margin-bottom:6px">tarjetas en total</div>'+ST.map(s=>kv(s,c[s])).join('')+'</div>';
+h+='<div class="sc"><h3>2 · PUBLICADAS POR PERIODO</h3>'+kv('Esta semana ('+fm(w0)+')',pw[1])+kv('Este mes',pm)+(sf?'<div class="sn">'+sf+' publicada(s) sin fecha: no entran en ningún periodo.</div>':'')+'<div class="sn">Se usa la fecha en que pasó a «Publicado»; si la tarjeta es antigua, su fecha planificada.</div></div>';
+const ks=Object.keys(pl).sort((a,b)=>pl[b].n-pl[a].n);
+h+='<div class="sc"><h3>3 · POR PLATAFORMA</h3>'+(ks.length?'<table><tr><th>Plataforma</th><th>Tarjetas</th><th>Publicadas</th></tr>'+ks.map(k=>'<tr><td><span class="pl" style="background:'+cl(k)+'">'+esc(nm(k))+'</span></td><td>'+pl[k].n+'</td><td>'+pl[k].p+'</td></tr>').join('')+'</table>':'<div class="sn">Aún no hay tarjetas.</div>')+'</div>';
+h+='<div class="sc"><h3>4 · SEMANA ANTERIOR VS ACTUAL</h3><table><tr><th></th><th>Anterior<br>'+fm(w1)+'</th><th>Actual<br>'+fm(w0)+'</th></tr><tr><td>Tarjetas publicadas</td><td>'+pw[0]+'</td><td>'+pw[1]+'</td></tr><tr><td>Tareas hechas</td><td>'+t1.d+'</td><td>'+t0.d+'</td></tr></table></div>';
+h+='<div class="sc"><h3>5 · TAREAS: HECHAS VS PENDIENTES</h3>'+[['Semana actual',t0],['Semana anterior',t1]].map(x=>'<div style="margin-bottom:8px">'+kv(x[0],x[1].d+' hechas · '+x[1].p+' pendientes')+bar(x[1].d,x[1].n)+'</div>').join('')+'<div class="sn">Cuenta tareas puntuales y semanales; las tarjetas de contenido van aparte. Las semanales no guardan cuándo se crearon: la semana anterior cuenta todas las que existen hoy.</div></div>';
+const R=[w1,w0,null],sets=R.map(r=>pub.filter(p=>!r||inR(p,r)));
+const pc=(n,t)=>t?n/t*100:null,f0=v=>v===null?'—':Math.round(v)+'%';
+const cell=v=>f0(v.p)+' <span style="color:var(--mu);font-size:12px">('+v.x+')</span>';
+const dl=(a,b)=>{if(a===null||b===null)return'—';const x=Math.round(a-b);return x===0?'=':(x>0?'▲ +'+x:'▼ −'+Math.abs(x))+' pp'};
+const row=(lb,v)=>'<tr><td>'+lb+'</td><td>'+cell(v[0])+'</td><td>'+cell(v[1])+'</td><td>'+dl(v[1].p,v[0].p)+'</td><td>'+(v[2]?cell(v[2]):'—')+'</td></tr>';
+const hd=t=>'<div style="overflow-x:auto"><table><tr><th>'+t+'</th><th>Anterior</th><th>Actual</th><th>Cambio</th><th>Histórico</th></tr>';
+const share=(kf,lb)=>{const ks=[...new Set(pub.map(kf))].sort((a,b)=>pub.filter(p=>kf(p)===b).length-pub.filter(p=>kf(p)===a).length);
+return ks.map(k=>row(lb(k),sets.map(s=>{const n=s.filter(p=>kf(p)===k).length;return{p:pc(n,s.length),x:n}}))).join('')};
+const cal=r=>{const l=S.posts.filter(p=>!r||(p.date&&p.date>=r[0]&&p.date<=r[1])),n=l.filter(p=>p.status==='Publicado').length;return{p:pc(n,l.length),x:n+' de '+l.length}};
+const tv=t=>({p:pc(t.d,t.n),x:t.d+' de '+t.n});
+const top=kf=>{const s=sets[1];if(!s.length)return null;const c={};s.forEach(p=>{const k=kf(p);c[k]=(c[k]||0)+1});const k=Object.keys(c).sort((a,b)=>c[b]-c[a])[0];return[k,Math.round(c[k]/s.length*100)]};
+const fk=p=>p.fmt||'Sin formato',tp=top(p=>p.plat),tf=top(fk);
+h+='<div class="sc" style="grid-column:1/-1"><h3>INFORME EN PORCENTAJES · SEMANA ANTERIOR ('+fm(w1)+') VS ACTUAL ('+fm(w0)+')</h3>'
++'<b>Cumplimiento</b>'+hd('')+row('Tareas hechas',[tv(t1),tv(t0)])+row('Tarjetas planificadas que se publicaron',[cal(w1),cal(w0),cal(null)])+'</table></div>'
++'<b style="display:block;margin-top:12px">Lo publicado, por plataforma (% del total publicado en el periodo)</b>'+hd('')+(pub.length?share(p=>p.plat,k=>'<span class="pl" style="background:'+cl(k)+'">'+esc(nm(k))+'</span>'):'<tr><td colspan="5" class="sn">Aún no hay publicaciones.</td></tr>')+'</table></div>'
++'<b style="display:block;margin-top:12px">Lo publicado, por formato (reel, post…)</b>'+hd('')+(pub.length?share(fk,k=>esc(k)):'<tr><td colspan="5" class="sn">Aún no hay publicaciones.</td></tr>')+'</table></div>'
++(tp&&tf?'<div style="margin-top:12px">📌 Esta semana, la plataforma con más publicaciones fue <b>'+esc(nm(tp[0]))+'</b> ('+tp[1]+'%) y el formato más usado fue <b>'+esc(tf[0])+'</b> ('+tf[1]+'%).</div>':'')
++'<div class="sn">Cambio = puntos porcentuales (pp) entre la semana actual y la anterior. Con pocas publicaciones los porcentajes se mueven mucho: mira también el número entre paréntesis. «Histórico» usa todas tus tarjetas.</div>'
++'<div style="margin-top:10px"><button id="pr">🖨 Imprimir / guardar como PDF</button></div></div>';
+$('gE').innerHTML=h;$('pr').onclick=()=>window.print()}
+function rC(){const g=$('gC');g.innerHTML='';
+ST.forEach((s,i)=>{const col=document.createElement('div');col.className='col';
+const l=S.posts.filter(p=>p.status===s&&(!filt||p.plat===filt)).sort((a,b)=>(a.date||'9').localeCompare(b.date||'9'));
+col.innerHTML='<h3><span>'+s+'</span><span>'+l.length+'</span></h3>';
+l.forEach(p=>{const r=document.createElement('div');r.className='t';r.style.borderColor=cl(p.plat);
+const tt=document.createElement('div');tt.className='tt';tt.innerHTML='<span></span><small>'+esc(nm(p.plat))+' · '+esc(p.fmt)+(p.date?' · '+p.date:'')+'</small>';tt.firstChild.textContent=p.title;tt.onclick=()=>openP(p);r.appendChild(tt);
+if(i<3){const b=document.createElement('button');b.textContent='→';b.title='Pasar a '+ST[i+1];b.style.padding='0 7px';b.onclick=()=>{setSt(p,ST[i+1]);render()};r.appendChild(b)}
+col.appendChild(r)});
+const ab=document.createElement('button');ab.className='add';ab.textContent='+ Publicación';ab.onclick=()=>openP(null,s);col.appendChild(ab);g.appendChild(col)})}
+function tog(t){if(t.kind==='t'){const x=S.tasks.find(y=>y.id===t.id);x.done=!x.done}else if(t.kind==='c'){const p=S.posts.find(y=>y.id===t.id);setSt(p,p.status==='Publicado'?'Listo':'Publicado')}else{const k=t.id+'|'+t.date;S.done[k]?delete S.done[k]:S.done[k]=true}render()}
+function openT(t,date){edit=t;$('dt').textContent=t?'Editar tarea':'Nueva tarea';$('ar').innerHTML=opts(t&&t.area);$('ti').value=t?t.title:'';if(t)$('ar').value=t.area;$('da').value=t?t.date:(date||iso(new Date()));$('rp').value=t&&t.kind==='p'?'1':'0';$('del').style.display=t?'':'none';$('dlg').showModal()}
+function openP(p,st){edit=p;$('pt').textContent=p?'Editar publicación':'Nueva publicación';$('par').innerHTML=opts(p&&p.plat);$('pst').innerHTML=ST.map(s=>'<option>'+s+'</option>').join('');
+$('pti').value=p?p.title:'';if(p)$('par').value=p.plat;$('pfm').value=p?p.fmt:'Post';$('pst').value=p?p.status:(st||'Idea');$('pda').value=p&&p.date?p.date:'';$('pno').value=p?p.notes||'':'';$('pdel').style.display=p?'':'none';$('pdl'.replace('pdl','pdl')).showModal()}
+document.querySelectorAll('.cn').forEach(b=>b.onclick=()=>b.closest('dialog').close());
+$('nt').onclick=()=>openT(null);$('np').onclick=()=>{tab='C';render();openP(null)};
+$('f').onsubmit=()=>{const ti=$('ti').value.trim(),ar=$('ar').value,da=$('da').value,rp=$('rp').value==='1';if(!ti||!da)return;
+if(edit){if(edit.kind==='t')S.tasks=S.tasks.filter(x=>x.id!==edit.id);else{const p=S.tpl.find(x=>x.id===edit.id);if(rp){p.title=ti;p.area=ar;render();return}S.tpl=S.tpl.filter(x=>x.id!==edit.id)}}
+const id='n'+Date.now();
+if(rp)S.tpl.push({id,title:ti,area:ar,days:[wd(pd(da))]});else S.tasks.push({id,title:ti,area:ar,date:da,done:false});
+render()};
+$('pf').onsubmit=()=>{const o={title:$('pti').value.trim(),plat:$('par').value,fmt:$('pfm').value,status:$('pst').value,date:$('pda').value,notes:$('pno').value};if(!o.title)return;
+if(edit){Object.assign(edit,o);setSt(edit,o.status)}else{const q={id:'p'+Date.now(),...o};S.posts.push(q);setSt(q,o.status)}render()};
+$('del').onclick=()=>{if(edit.kind==='t')S.tasks=S.tasks.filter(x=>x.id!==edit.id);else if(confirm('Esta tarea se repite cada semana. ¿Eliminarla de todas las semanas?'))S.tpl=S.tpl.filter(x=>x.id!==edit.id);$('dlg').close();render()};
+$('pdel').onclick=()=>{if(confirm('¿Eliminar esta publicación?')){S.posts=S.posts.filter(x=>x.id!==edit.id);$('pdl').close();render()}};
+function rA(){$('al').innerHTML='';Object.entries(S.areas).forEach(([k,v])=>{const r=document.createElement('div');r.className='ar';
+r.innerHTML='<input type="checkbox" '+(v[2]?'checked':'')+'><i style="width:12px;height:12px;border-radius:50%;background:'+v[1]+'"></i><span>'+esc(v[0])+'</span>';
+r.firstChild.onchange=e=>{v[2]=e.target.checked?1:0;render()};
+if(k[0]==='c'){const d=document.createElement('button');d.textContent='✕';d.onclick=()=>{delete S.areas[k];rA();render()};r.appendChild(d)}
+$('al').appendChild(r)})}
+$('ca').onclick=()=>{rA();$('adl').showModal()};
+$('aa').onclick=()=>{const n=$('an').value.trim();if(!n)return;S.areas['c'+Date.now()]=[n,$('ac').value,1];$('an').value='';rA();render()};
+$('tS').onclick=()=>{tab='S';render()};$('tC').onclick=()=>{tab='C';render()};$('tE').onclick=()=>{tab='E';render()};
+$('prev').onclick=()=>{cur.setDate(cur.getDate()-7);render()};
+$('next').onclick=()=>{cur.setDate(cur.getDate()+7);render()};
+$('hoyb').onclick=()=>{cur=mon(new Date());render()};
+$('cw').onclick=()=>{const a=iso(cur),e=new Date(cur);e.setDate(e.getDate()+6);const b=iso(e);const l=S.tasks.filter(t=>t.date>=a&&t.date<=b);
+if(!l.length){alert('No hay tareas puntuales en esta semana para copiar. Las tareas semanales repetidas ya se ven en todas las semanas.');return}
+l.forEach(t=>{const d=pd(t.date);d.setDate(d.getDate()+7);S.tasks.push({id:'n'+Date.now()+Math.random(),title:t.title,area:t.area,date:iso(d),done:false})});
+cur.setDate(cur.getDate()+7);render()};
+$('noti').onclick=async()=>{
+if(S.noti){S.noti=false;render();return}
+const h=prompt('¿A qué hora quieres el aviso diario? (24 h, ej: 09:00)',S.hour);if(!h||!/^\d{1,2}:\d{2}$/.test(h))return;S.hour=h.padStart(5,'0');
+try{if('Notification' in window&&Notification.permission!=='granted')await Notification.requestPermission()}catch(e){}
+S.noti=true;render()};
+function chk(){if(!S.noti)return;const n=new Date(),k=iso(n),hm=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+if(hm>=S.hour&&S.lastN!==k){S.lastN=k;sv();const p=dayItems(n,1).filter(t=>!t.done).length;
+try{if(Notification.permission==='granted')new Notification('Tu trabajo de hoy',{body:p+' tareas pendientes'})}catch(e){}}}
+setInterval(chk,60000);chk();
+$('exp').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download='planificador-copia.json';a.click()};
+$('imp').onclick=()=>$('file').click();
+$('file').onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(x=>{try{S=Object.assign(S,JSON.parse(x));render()}catch(er){alert('Archivo no válido')}})};
+/* ===== Sincronización con Google Drive (cada persona usa SU cuenta) ===== */
+const CLIENT_ID='PEGA_AQUI_EL_ID_DE_CLIENTE';
+const SC='https://www.googleapis.com/auth/drive.file',FN='mundo-digital-planner-datos.json',GA='https://www.googleapis.com/';
+const okId=()=>/\.apps\.googleusercontent\.com$/.test(CLIENT_ID);
+const hasData=()=>S.tasks.length||S.posts.length||S.tpl.some(t=>!/^s\d+$/.test(t.id));
+const stamp=()=>new Date().toISOString().slice(0,16).replace(/[:T]/g,'-');
+const gs=()=>{try{localStorage.setItem('plan-v1-sync',JSON.stringify({on:G.on,fid:G.fid,synced:G.synced,mail:G.mail}))}catch(e){}};
+function stat(){const el=$('sync');if(!el)return;let m,bad=false;
+if(G.err){m=G.err;bad=true}
+else if(!G.on)m='Sin conectar: tus datos solo están en este navegador.';
+else if(G.busy)m='Sincronizando…';
+else if((S.ts||0)>G.synced)m='Cambios pendientes de enviar a Drive…';
+else m='✓ Sincronizado con Drive'+(G.mail?' ('+G.mail+')':'');
+el.textContent=m;el.style.color=bad?'#dc2626':'var(--mu)';
+$('gb').textContent=G.on?'☁ Desconectar Drive':'☁ Conectar con Google Drive';
+$('gr').classList.toggle('hid',!(G.on&&G.auth))}
+function sched(){if(!G.on)return;clearTimeout(G.t);G.t=setTimeout(()=>syncNow(false),2500);stat()}
+function note(t){$('cft').textContent=t;$('cf').classList.remove('hid')}
+function gis(){return new Promise((ok,no)=>{if(window.google&&google.accounts&&google.accounts.oauth2)return ok();const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.onload=()=>ok();s.onerror=()=>no(new Error('gis'));document.head.appendChild(s)})}
+function tok(inter){return new Promise((ok,no)=>{if(G.tok&&Date.now()<G.exp-60000)return ok(G.tok);
+gis().then(()=>{let done=0,tm;const fin=(f,v)=>{if(!done){done=1;clearTimeout(tm);f(v)}};
+tm=setTimeout(()=>fin(no,new Error('auth')),inter?120000:15000);
+const c=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:SC,
+callback:r=>{if(r&&r.access_token){G.tok=r.access_token;G.exp=Date.now()+(r.expires_in||3600)*1000;fin(ok,G.tok)}else fin(no,new Error('auth'))},
+error_callback:()=>fin(no,new Error('auth'))});
+c.requestAccessToken({prompt:inter?'':'none'})}).catch(no)})}
+async function gf(t,u,o){o=o||{};o.headers=Object.assign({Authorization:'Bearer '+t},o.headers||{});const r=await fetch(u,o);if(r.status===401){G.tok=null;throw new Error('auth')}return r}
+const need=r=>{if(!r.ok)throw new Error('HTTP '+r.status)};
+async function create(t,name,d){const b='pl'+Date.now();
+const body='--'+b+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify({name:name,mimeType:'application/json'})+'\r\n--'+b+'\r\nContent-Type: application/json\r\n\r\n'+d+'\r\n--'+b+'--';
+const r=await gf(t,GA+'upload/drive/v3/files?uploadType=multipart&fields=id',{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+b},body:body});need(r);return (await r.json()).id}
+async function put(t,fid){if(!S.ts)S.ts=Date.now();const ts=S.ts,d=JSON.stringify(S);
+if(fid){const r=await gf(t,GA+'upload/drive/v3/files/'+fid+'?uploadType=media',{method:'PATCH',headers:{'Content-Type':'application/json'},body:d});need(r)}
+else fid=await create(t,FN,d);
+G.fid=fid;G.synced=ts;gs()}
+function apply(r){const k={noti:S.noti,hour:S.hour,lastN:S.lastN};
+S=Object.assign({tasks:[],tpl:[],done:{},posts:[],areas:{}},r,k);
+Object.keys(DA).forEach(x=>{if(!S.areas[x])S.areas[x]=[...DA[x]]});
+S.ts=r.ts||0;G.synced=S.ts;lastK=key();render()}
+async function syncNow(inter){
+if(!G.on||G.busy)return;
+if(!navigator.onLine){G.err='Sin conexión: tus cambios están guardados en este navegador y se enviarán a Drive al volver.';stat();return}
+if(!inter&&document.querySelector('dialog[open]')){clearTimeout(G.t);G.t=setTimeout(()=>syncNow(false),5000);return}
+G.busy=true;G.err='';G.auth=false;stat();
+try{
+const t=await tok(inter);
+let fid=G.fid,rem=null;
+if(fid){const r=await gf(t,GA+'drive/v3/files/'+fid+'?alt=media');if(r.status===404)fid=null;else{need(r);rem=await r.json()}}
+if(!fid){const r=await gf(t,GA+'drive/v3/files?q='+encodeURIComponent("name='"+FN+"' and trashed=false")+'&orderBy=modifiedTime%20desc&fields=files(id)');need(r);
+const f=(await r.json()).files||[];
+if(f.length){fid=f[0].id;const r2=await gf(t,GA+'drive/v3/files/'+fid+'?alt=media');need(r2);rem=await r2.json()}}
+if(!S.ts&&hasData()){S.ts=Date.now();try{localStorage.setItem('plan-v1',JSON.stringify(S))}catch(e){}}
+const lts=S.ts||0,ld=lts>G.synced;
+if(!rem){await put(t,null)}
+else{const rts=rem.ts||0,rd=rts>G.synced;
+if(rd&&ld){const rw=rts>lts,perd=rw?S:rem;
+await create(t,'mundo-digital-planner-copia-'+stamp()+'.json',JSON.stringify(perd));
+try{localStorage.setItem('plan-v1-backup',JSON.stringify(perd))}catch(e){}
+note('⚠ Editaste en dos dispositivos sin conexión entre ellos. Se quedó la versión más reciente ('+(rw?'la de Drive':'la de este dispositivo')+') y la otra se guardó como copia de seguridad en tu Drive (archivo «mundo-digital-planner-copia-…») y en este navegador. Revisa que todo esté bien.');
+if(rw)apply(rem);else await put(t,fid)}
+else if(rd)apply(rem);
+else if(ld)await put(t,fid);
+if(fid){G.fid=fid}}
+G.err=''
+}catch(e){
+if(e.message==='auth'){G.auth=true;G.err='Google necesita que vuelvas a iniciar sesión: pulsa «Reconectar». Mientras tanto tus datos se guardan en este navegador.'}
+else if(e.message==='gis')G.err='No se pudo cargar el inicio de sesión de Google. Tus datos siguen guardados en este navegador.';
+else if(!navigator.onLine||e instanceof TypeError)G.err='No se pudo conectar con Google Drive (sin internet o conexión bloqueada). Tus datos siguen guardados en este navegador.';
+else G.err='No se pudo sincronizar con Drive ('+e.message+'). Tus datos siguen guardados en este navegador.'}
+G.busy=false;gs();stat();
+if(G.on&&!G.err&&(S.ts||0)>G.synced)sched()}
+$('gb').onclick=async()=>{
+if(G.on){if(!confirm('¿Desconectar Google Drive? Tus datos seguirán en este navegador y en tu Drive; solo dejarán de sincronizarse.'))return;
+try{if(G.tok)google.accounts.oauth2.revoke(G.tok)}catch(e){}G.on=false;G.tok=null;G.err='';G.auth=false;gs();stat();return}
+G.err='';
+if(location.protocol==='file:'){G.err='Google no permite iniciar sesión en un archivo abierto con doble clic. Abre el planificador desde su dirección web (ver instrucciones).';stat();return}
+if(!okId()){G.err='Falta pegar el ID de cliente de Google dentro del archivo (variable CLIENT_ID). Ver instrucciones.';stat();return}
+if(!navigator.onLine){G.err='Necesitas internet para conectar con Google Drive.';stat();return}
+G.busy=true;stat();
+try{const t=await tok(true);let mail='';
+try{const r=await gf(t,GA+'drive/v3/about?fields=user(emailAddress)');if(r.ok)mail=((await r.json()).user||{}).emailAddress||''}catch(e){}
+if(G.mail&&mail&&G.mail!==mail){G.fid=null;G.synced=0}
+G.mail=mail;G.on=true;G.busy=false;gs();await syncNow(true)
+}catch(e){G.busy=false;G.on=false;G.err=e.message==='gis'?'No se pudo cargar el inicio de sesión de Google (¿sin internet?).':'No se completó la conexión con Google.';stat()}};
+$('gr').onclick=()=>{G.err='';G.auth=false;syncNow(true)};
+$('cfx').onclick=()=>$('cf').classList.add('hid');
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&G.on)syncNow(false)});
+window.addEventListener('online',()=>{if(G.on)syncNow(false)});
+window.addEventListener('offline',()=>{if(G.on){G.err='Sin conexión: tus cambios se guardan en este navegador y se enviarán a Drive al volver.';stat()}});
+setInterval(()=>{if(G.on&&!document.hidden)syncNow(false)},120000);
+stat();if(G.on)setTimeout(()=>syncNow(false),600);
+
+render();
+</script></body></html>
