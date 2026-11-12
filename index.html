@@ -250,7 +250,7 @@ $('exp').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjec
 $('imp').onclick=()=>$('file').click();
 $('file').onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(x=>{try{S=Object.assign(S,JSON.parse(x));render()}catch(er){alert('Archivo no válido')}})};
 /* ===== Sincronización con Google Drive (cada persona usa SU cuenta) ===== */
-const CLIENT_ID='PEGA_AQUI_EL_ID_DE_CLIENTE';
+const CLIENT_ID='563006702776-1humm3vkvv7b3opa88nvf0antc415nv3.apps.googleusercontent.com';
 const SC='https://www.googleapis.com/auth/drive.file',FN='mundo-digital-planner-datos.json',GA='https://www.googleapis.com/';
 const okId=()=>/\.apps\.googleusercontent\.com$/.test(CLIENT_ID);
 const hasData=()=>S.tasks.length||S.posts.length||S.tpl.some(t=>!/^s\d+$/.test(t.id));
